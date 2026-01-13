@@ -14,23 +14,25 @@ pipeline {
                     apps.each { app ->
                         dir(app.path) {
                             echo "🚀 Deploying ${app.name}..."
-                            // Her klasör için geçici bir Dockerfile oluşturup siliyoruz
-                            // Jenkinsfile içindeki Dockerfile.temp oluşturan kısmı şununla değiştir:
-                            sh """
-                            echo 'FROM node:20-alpine as builder
-                            WORKDIR /app
-                            COPY package.json ./
-                            RUN npm install
-                            COPY . .
-                            RUN npm run build
+                            
+                            // Dockerfile içeriğini tek satırda güvenli şekilde oluşturuyoruz
+                            def dockerfileContent = """
+FROM node:20-alpine as builder
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-                            FROM nginx:alpine
-                            # Next.js statik çıktıları genellikle .next veya out klasöründedir. 
-                            # Garanti olması için build sonrası oluşan dosyaları Nginx'e taşıyoruz.
-                            COPY --from=builder /app/.next /usr/share/nginx/html
-                            EXPOSE 80
-                            CMD ["nginx", "-g", "daemon off;"]' > Dockerfile.temp
-                            """
+FROM nginx:alpine
+# Next.js statik çıktıları genellikle .next içinde ama static export ise out klasöründedir.
+# Önce .next deniyoruz, eğer yoksa out klasörüne bakarız.
+COPY --from=builder /app/.next /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+""".trim()
+
+                            writeFile file: 'Dockerfile.temp', text: dockerfileContent
                             
                             sh "docker build -t ${app.name} -f Dockerfile.temp ."
                             sh "docker stop ${app.name}-container || true"
