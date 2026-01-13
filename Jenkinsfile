@@ -2,17 +2,39 @@ pipeline {
     agent any
 
     stages {
-        stage('🏗️ Build & Deploy') {
+        stage('🏗️ Build & Deploy All Apps') {
             steps {
-                // Docker imajını oluştur
-                sh 'docker build -t frontend-app .'
-                
-                // Eski konteynır varsa temizle
-                sh 'docker stop frontend-container || true'
-                sh 'docker rm frontend-container || true'
-                
-                // 3000 portundan yayına al (Dışarı:3000 -> İçeri:80)
-                sh 'docker run -d --name frontend-container --network ecommerce-net -p 3000:80 frontend-app'
+                script {
+                    def apps = [
+                        ['name': 'frontend-main',  'path': 'deniz-tasarim-fe',     'port': '3000'],
+                        ['name': 'frontend-admin', 'path': 'deniz-tasarim-admin',  'port': '3001'],
+                        ['name': 'frontend-seller', 'path': 'deniz-tasarim-seller', 'port': '3002']
+                    ]
+
+                    apps.each { app ->
+                        dir(app.path) {
+                            echo "🚀 Deploying ${app.name}..."
+                            // Her klasör için geçici bir Dockerfile oluşturup siliyoruz
+                            sh """
+                            echo 'FROM node:20-alpine as builder
+                            WORKDIR /app
+                            COPY package.json ./
+                            RUN npm install
+                            COPY . .
+                            RUN npm run build
+                            FROM nginx:alpine
+                            COPY --from=builder /app/build /usr/share/nginx/html
+                            EXPOSE 80
+                            CMD ["nginx", "-g", "daemon off;"]' > Dockerfile.temp
+                            """
+                            
+                            sh "docker build -t ${app.name} -f Dockerfile.temp ."
+                            sh "docker stop ${app.name}-container || true"
+                            sh "docker rm ${app.name}-container || true"
+                            sh "docker run -d --name ${app.name}-container --network ecommerce-net -p ${app.port}:80 ${app.name}"
+                        }
+                    }
+                }
             }
         }
     }
