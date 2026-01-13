@@ -1,0 +1,22 @@
+# Bağımlılıklar (ASLA YÜKLEME)
+node_modules/
+.pnp
+.pnp.js
+
+# Test ve Build çıktıları
+coverage/
+dist/
+build/
+.next/
+out/
+
+# Sistem ve IDE dosyaları
+.DS_Store
+.idea/
+.vscode/
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
