@@ -15,6 +15,7 @@ pipeline {
                         dir(app.path) {
                             echo "🚀 Deploying ${app.name}..."
                             // Her klasör için geçici bir Dockerfile oluşturup siliyoruz
+                            // Jenkinsfile içindeki Dockerfile.temp oluşturan kısmı şununla değiştir:
                             sh """
                             echo 'FROM node:20-alpine as builder
                             WORKDIR /app
@@ -22,8 +23,11 @@ pipeline {
                             RUN npm install
                             COPY . .
                             RUN npm run build
+
                             FROM nginx:alpine
-                            COPY --from=builder /app/build /usr/share/nginx/html
+                            # Next.js statik çıktıları genellikle .next veya out klasöründedir. 
+                            # Garanti olması için build sonrası oluşan dosyaları Nginx'e taşıyoruz.
+                            COPY --from=builder /app/.next /usr/share/nginx/html
                             EXPOSE 80
                             CMD ["nginx", "-g", "daemon off;"]' > Dockerfile.temp
                             """
