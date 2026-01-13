@@ -27,7 +27,7 @@ RUN npm run build
 FROM nginx:alpine
 # Next.js statik çıktıları genellikle .next içinde ama static export ise out klasöründedir.
 # Önce .next deniyoruz, eğer yoksa out klasörüne bakarız.
-COPY --from=builder /app/.next /usr/share/nginx/html
+COPY --from=builder /app/out /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 """.trim()
