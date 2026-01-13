@@ -12,7 +12,7 @@ const nextConfig = {
       },
     ],
   },
-  // Hataları baypas eden kritik ekleme:
+  output: 'export', // <--- BU SATIRI EKLE
   typescript: {
     ignoreBuildErrors: true,
   },

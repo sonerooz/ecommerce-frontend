@@ -15,18 +15,17 @@ pipeline {
                         dir(app.path) {
                             echo "🚀 Deploying ${app.name}..."
                             
-                            // Dockerfile içeriğini tek satırda güvenli şekilde oluşturuyoruz
                             def dockerfileContent = """
 FROM node:20-alpine as builder
 WORKDIR /app
 COPY package.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+# Next.js'e 'export' modunda build almasını zorluyoruz
+RUN npx next build
 
 FROM nginx:alpine
-# Next.js statik çıktıları genellikle .next içinde ama static export ise out klasöründedir.
-# Önce .next deniyoruz, eğer yoksa out klasörüne bakarız.
+# Artık dosyalar kesinlikle 'out' klasöründe olacak
 COPY --from=builder /app/out /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
