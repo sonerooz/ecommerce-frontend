@@ -1,11 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export', // <--- BU SATIRI EKLE
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: "export",  // Bu satır önemli, Nginx için gerekli
+  images: {
+    unoptimized: true, // Static export için gerekli
   },
 };
 

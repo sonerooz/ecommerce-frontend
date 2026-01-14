@@ -44,3 +44,10 @@ export default async function EditStorePage({
     </div>
   );
 }
+
+
+
+// deniz-tasarim-admin/app/stores/[id]/page.tsx dosyasının içine ekle:
+export async function generateStaticParams() {
+  return []; // Boş bir dizi dönüyoruz ki build hatası sussun.
+}
