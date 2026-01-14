@@ -1,38 +1,32 @@
-// components/ProductCard.tsx
-import { Product } from "@/types"; // @ işareti kök dizini temsil eder
+import { Heart } from "lucide-react";
 import Image from "next/image";
 
-interface ProductCardProps {
-  product: Product;
-}
-
-export default function ProductCard({ product }: ProductCardProps) {
-  const price = product.variants[0]?.price || 0;
-  const image = product.images[0]?.url || "https://placehold.co/400";
-
+export default function ProductCard({ product }: any) {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-white">
-      <div className="relative w-full h-64 mb-4">
-        <Image 
-           src={image} 
-           alt={product.name}
-           fill
-           className="object-cover rounded-md"
-        />
+    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm relative group">
+      <button className="absolute top-2 right-2 z-10 p-1.5 bg-white/80 rounded-full shadow-sm">
+        <Heart size={18} className="text-gray-400 group-hover:text-red-500 transition-colors" />
+      </button>
+      
+      <div className="relative aspect-[3/4] w-full bg-gray-50">
+        <img src={product.image} alt={product.name} className="object-cover w-full h-full" />
+        <div className="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-[10px] font-bold py-1 text-center">
+          Hızlı Teslimat
+        </div>
       </div>
-      <h3 className="font-semibold text-lg text-gray-800 mb-1 truncate">
-        {product.name}
-      </h3>
-      <p className="text-gray-500 text-sm mb-3 line-clamp-2">
-        {product.description}
-      </p>
-      <div className="flex items-center justify-between">
-        <span className="text-xl font-bold text-blue-600">
-          {price} ₺
-        </span>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">
-          Sepete Ekle
-        </button>
+
+      <div className="p-2 space-y-1">
+        <h3 className="font-bold text-sm truncate uppercase tracking-tighter">
+          <span className="text-black">{product.brand}</span>
+          <span className="text-gray-600 font-normal ml-1">{product.name}</span>
+        </h3>
+        <div className="flex items-center gap-1">
+          <span className="text-orange-500 text-xs">🧡 126 kişi</span>
+          <span className="text-gray-400 text-[10px]">favoriledi!</span>
+        </div>
+        <div className="text-pink-600 font-bold text-base">
+          {product.price} TL
+        </div>
       </div>
     </div>
   );

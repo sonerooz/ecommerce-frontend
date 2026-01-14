@@ -1,38 +1,21 @@
-import Link from "next/link";
+import { Search, Bell } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tighter">
-          Deniz<span className="text-blue-600">Tasarım</span>
-        </Link>
-
-        {/* Arama Çubuğu (Masaüstü) */}
-        <div className="hidden md:flex flex-1 mx-10 max-w-lg">
-          <input 
-            type="text" 
-            placeholder="Ürün, kategori veya marka ara..." 
-            className="w-full border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:border-blue-500"
-          />
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-r-md hover:bg-blue-700">
-            Ara
-          </button>
-        </div>
-
-        {/* Sağ Menü */}
-        <nav className="flex items-center gap-6 text-sm font-medium">
-          <Link href="/login" className="flex items-center gap-1 hover:text-blue-600">
-            <span>👤 Giriş Yap</span>
-          </Link>
-          <Link href="/cart" className="flex items-center gap-1 hover:text-blue-600">
-            <span>🛒 Sepetim</span>
-            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">0</span>
-          </Link>
-        </nav>
+    <div className="sticky top-0 bg-white p-4 flex items-center gap-3 z-40 md:shadow-sm">
+      <div className="w-10 h-10 bg-pink-500 rounded-full flex-shrink-0"></div> {/* Logo Alanı */}
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+        <input 
+          type="text" 
+          placeholder="Ürün, kategori, marka ara" 
+          className="w-full bg-gray-100 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none border border-transparent focus:border-pink-300"
+        />
       </div>
-    </header>
+      <button className="relative p-2 bg-gray-100 rounded-full">
+        <Bell size={22} className="text-gray-700" />
+        <span className="absolute top-1 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+      </button>
+    </div>
   );
 }
