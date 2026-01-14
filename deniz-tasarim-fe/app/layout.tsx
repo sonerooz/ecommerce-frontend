@@ -11,24 +11,22 @@ export const metadata: Metadata = {
   description: "En şık tasarımlar burada.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
-      <body className={inter.className}>
-        {/* Üst Kısım */}
-        <Header /> 
-        
-        {/* Sayfa İçeriği (Kaydırılabilir alan) */}
-        <main className="pb-20 md:pb-0"> 
-          {children}
+      <body>
+        {/* Header her zaman içeride kalmalı */}
+        <div className="max-w-7xl mx-auto px-4">
+          <Header />
+        </div>
+
+        {/* Banner alanı tam genişlik (layout dışında veya özel class ile) */}
+        <main>
+          {children} 
         </main>
 
-        {/* Alt Navigasyon (Sadece mobilde görünür) */}
-        <MobileNavbar /> 
+        {/* Footer tam genişlik olacaksa children içinde veya burada bağımsız durmalı */}
+        <MobileNavbar />
       </body>
     </html>
   );
