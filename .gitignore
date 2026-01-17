@@ -20,3 +20,14 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Windows Sistem Dosyaları (Senin için önemli)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Vercel (Next.js'in deploy platformu - ilerde oluşabilir)
+.vercel
+
+# TypeScript Derleme Bilgisi (Gereksiz kalabalık yapmasın)
+*.tsbuildinfo
