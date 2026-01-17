@@ -11,15 +11,20 @@ pipeline {
                         ['name': 'frontend-seller', 'path': 'deniz-tasarim-seller', 'port': '3002']
                     ]
 
-                    // API URL'ini burada tanımlayalım (İstersen Jenkins Environment Variable'dan da çekebilirsin)
+                    // API URL
                     def apiUrl = "http://46.224.218.122:8090"
 
                     apps.each { app ->
+                        // İlgili klasöre giriyoruz (Örn: deniz-tasarim-admin)
                         dir(app.path) {
                             echo "🚀 Deploying ${app.name}..."
                             
-                            // 1. DEĞİŞİKLİK: Dockerfile içine ARG ve ENV satırlarını ekliyoruz
-                            // Dikkat: Groovy string içinde $ işareti değişken sandığı için \$ ile escape ediyoruz.
+                            // --- DÜZELTME BURADA ---
+                            // Şu an alt klasördeyiz. Bir üst dizindeki (workspace root) 
+                            // nginx.conf'u buraya kopyalıyoruz.
+                            sh "cp ../nginx.conf ."
+                            // -----------------------
+
                             def dockerfileContent = """
 FROM node:20-alpine as builder
 WORKDIR /app
@@ -27,23 +32,23 @@ COPY package.json ./
 RUN npm install
 COPY . .
 
-# Build argümanını al
 ARG NEXT_PUBLIC_API_URL
-# Bunu ortam değişkenine çevir (Next.js build sırasında bunu görecek)
 ENV NEXT_PUBLIC_API_URL=\$NEXT_PUBLIC_API_URL
 
-# Next.js build alırken artık yukarıdaki URL'i kullanacak
 RUN npx next build
 
 FROM nginx:alpine
 COPY --from=builder /app/out /usr/share/nginx/html
+
+# Dockerfile ile aynı dizine kopyaladığımız nginx.conf'u içeri alıyoruz
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 """.trim()
 
                             writeFile file: 'Dockerfile.temp', text: dockerfileContent
                             
-                            // 2. DEĞİŞİKLİK: docker build komutuna --build-arg ekliyoruz
                             sh "docker build --build-arg NEXT_PUBLIC_API_URL='${apiUrl}' -t ${app.name} -f Dockerfile.temp ."
                             
                             sh "docker stop ${app.name}-container || true"
